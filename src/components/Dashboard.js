@@ -6,6 +6,7 @@ const Dashboard = () => {
   const [skills, setSkills] = useState('');
   const [experience, setExperience] = useState('0');
   const [statusMessage, setStatusMessage] = useState('');
+  const [uploadData, setUploadData] = useState(null); // ✅ Stores the response object safely
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -18,8 +19,9 @@ const Dashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      setStatusMessage('Please select a file to upload.');
       setIsError(true);
+      setStatusMessage('Please select a file to upload.');
+      setUploadData(null);
       return;
     }
 
@@ -30,6 +32,7 @@ const Dashboard = () => {
 
     setLoading(true);
     setStatusMessage('');
+    setUploadData(null);
 
     try {
       const response = await API.post('/candidate/upload', formData, {
@@ -39,7 +42,15 @@ const Dashboard = () => {
       });
 
       setIsError(false);
-      setStatusMessage(response.data || 'Resume uploaded successfully!');
+      
+      // ✅ Handle both object and string responses cleanly
+      if (typeof response.data === 'object') {
+        setStatusMessage(response.data.message || 'Resume uploaded successfully!');
+        setUploadData(response.data);
+      } else {
+        setStatusMessage(response.data || 'Resume uploaded successfully!');
+      }
+
     } catch (err) {
       console.error('Upload Error:', err);
       setIsError(true);
@@ -116,6 +127,7 @@ const Dashboard = () => {
           </button>
         </form>
 
+        {/* Status Message Display */}
         {statusMessage && (
           <div style={{ 
             marginTop: '20px', 
@@ -128,6 +140,30 @@ const Dashboard = () => {
             {statusMessage}
           </div>
         )}
+
+        {/* ✅ AI Evaluation Results Breakdown */}
+        {uploadData && !isError && (
+          <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#e9ecef', borderRadius: '6px' }}>
+            <h4 style={{ margin: '0 0 10px 0', color: '#0d6efd' }}>AI Assessment Results</h4>
+            {uploadData.candidateId && (
+              <p style={{ margin: '4px 0' }}>
+                <strong>Candidate ID:</strong> {uploadData.candidateId}
+              </p>
+            )}
+            {uploadData.aiMatchScore !== undefined && (
+              <p style={{ margin: '4px 0' }}>
+                {/* 🔧 Sanitized match score rendering to eliminate double % signs */}
+                <strong>AI Match Score:</strong> {String(uploadData.aiMatchScore).replace(/%/g, '')}%
+              </p>
+            )}
+            {uploadData.aiEvaluation && (
+              <p style={{ margin: '4px 0', whitespace: 'pre-line' }}>
+                <strong>AI Evaluation:</strong> {uploadData.aiEvaluation}
+              </p>
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   );
