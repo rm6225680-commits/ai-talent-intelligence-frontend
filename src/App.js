@@ -1,25 +1,27 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import RecruiterDashboard from './components/RecruiterDashboard';
+import Navbar from './components/Navbar';
 
 function App() {
   return (
     <Router>
-      <div>
-        <nav style={{ padding: '15px', background: '#f4f4f4', textAlign: 'center' }}>
-          <Link to="/" style={{ margin: '0 15px' }}>Login</Link>
-          <Link to="/register" style={{ margin: '0 15px' }}>Register</Link>
-          <Link to="/dashboard" style={{ margin: '0 15px' }}>Candidate Dashboard</Link>
-          <Link to="/recruiter" style={{ margin: '0 15px' }}>Recruiter Dashboard</Link>
-        </nav>
+      <div className="min-h-screen bg-slate-50">
+        {/* Dynamic Navigation Header */}
+        <Navbar />
+
+        {/* Application Routes */}
         <Routes>
-          <Route path="/" element={<Login />} />
+          {/* Redirect default root path "/" directly to Register */}
+          <Route path="/" element={<Navigate to="/register" replace />} />
+          
           <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/recruiter" element={<RecruiterDashboard />} />
+          <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
         </Routes>
       </div>
     </Router>
