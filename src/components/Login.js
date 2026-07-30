@@ -6,7 +6,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -23,7 +23,6 @@ export default function Login() {
 
       console.log("LOGIN RESPONSE:", response.data);
 
-      // Extract token and role flexibly from response
       const token = response.data.token || response.data.accessToken || response.data.jwt;
       let role = response.data.role || response.data.userRole || response.data.authorities;
 
@@ -33,17 +32,24 @@ export default function Login() {
 
       if (token) {
         localStorage.setItem('token', token);
-        localStorage.setItem('role', role || 'ROLE_RECRUITER');
 
-        // Direct redirection based on credential / role matching
+        const upperEmail = email ? email.trim().toUpperCase() : '';
         const upperRole = role ? String(role).toUpperCase() : '';
 
-        if (upperRole.includes('ADMIN')) {
+        // Force explicit redirection if email or role indicates Admin/Recruiter
+        if (upperEmail.includes('ADMIN') || upperRole.includes('ADMIN')) {
+          localStorage.setItem('role', 'ROLE_ADMIN');
           navigate('/admin-dashboard');
-        } else if (upperRole.includes('RECRUITER')) {
+        } else if (
+          upperEmail.includes('RECRUITER') || 
+          upperEmail.includes('HR') || 
+          upperRole.includes('RECRUITER') ||
+          !upperRole // Fallback if backend doesn't send role for non-candidate accounts
+        ) {
+          localStorage.setItem('role', 'ROLE_RECRUITER');
           navigate('/recruiter-dashboard');
         } else {
-          // Default fallback or candidate view
+          localStorage.setItem('role', 'ROLE_CANDIDATE');
           navigate('/dashboard');
         }
       } else {
