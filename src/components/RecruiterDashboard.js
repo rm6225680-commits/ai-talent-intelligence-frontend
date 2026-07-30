@@ -26,8 +26,8 @@ export default function RecruiterDashboard() {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
-    // Security Guard: Check auth before making API calls
-    if (!token || role !== 'ROLE_RECRUITER') {
+    // Security Guard: Flexible, case-insensitive check for recruiter role
+    if (!token || !role || !role.toUpperCase().includes('RECRUITER')) {
       navigate('/login');
       return;
     }
