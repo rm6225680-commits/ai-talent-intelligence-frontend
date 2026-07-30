@@ -26,9 +26,11 @@ export default function Login() {
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
 
-      // Handle role check flexible for both "RECRUITER" and "ROLE_RECRUITER"
+      // Handle role check for Recruiter, Admin, and Candidates
       if (role === 'RECRUITER' || role === 'ROLE_RECRUITER') {
         navigate('/recruiter-dashboard');
+      } else if (role === 'ADMIN' || role === 'ROLE_ADMIN') {
+        navigate('/admin-dashboard'); // Change '/admin-dashboard' if your route path is named differently
       } else {
         navigate('/dashboard'); // Candidates land directly on Candidate Workspace
       }
