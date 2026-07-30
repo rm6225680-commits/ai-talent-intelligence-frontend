@@ -6,7 +6,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -44,7 +44,7 @@ export default function Login() {
           upperEmail.includes('RECRUITER') || 
           upperEmail.includes('HR') || 
           upperRole.includes('RECRUITER') ||
-          !upperRole // Fallback if backend doesn't send role for non-candidate accounts
+          !upperRole 
         ) {
           localStorage.setItem('role', 'ROLE_RECRUITER');
           navigate('/recruiter-dashboard');
