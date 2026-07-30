@@ -24,28 +24,13 @@ export default function Login() {
       console.log("LOGIN RESPONSE:", response.data);
 
       const token = response.data.token || response.data.accessToken || response.data.jwt;
-      let role = response.data.role || response.data.userRole || response.data.authorities;
-
-      if (Array.isArray(role)) {
-        role = role[0];
-      }
 
       if (token) {
         localStorage.setItem('token', token);
 
-        const upperEmail = email ? email.trim().toUpperCase() : '';
-        const upperRole = role ? String(role).toUpperCase() : '';
+        const lowerEmail = email ? email.toLowerCase() : '';
 
-        // Force explicit redirection if email or role indicates Admin/Recruiter
-        if (upperEmail.includes('ADMIN') || upperRole.includes('ADMIN')) {
-          localStorage.setItem('role', 'ROLE_ADMIN');
-          navigate('/admin-dashboard');
-        } else if (
-          upperEmail.includes('RECRUITER') || 
-          upperEmail.includes('HR') || 
-          upperRole.includes('RECRUITER') ||
-          !upperRole 
-        ) {
+        if (lowerEmail.includes('admin') || lowerEmail.includes('recruiter') || lowerEmail.includes('hr')) {
           localStorage.setItem('role', 'ROLE_RECRUITER');
           navigate('/recruiter-dashboard');
         } else {
