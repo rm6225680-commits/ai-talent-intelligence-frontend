@@ -27,22 +27,17 @@ export default function Login() {
 
       if (token) {
         localStorage.setItem('token', token);
-
-        const lowerEmail = email ? email.toLowerCase() : '';
-
-        if (lowerEmail.includes('admin') || lowerEmail.includes('recruiter') || lowerEmail.includes('hr')) {
-          localStorage.setItem('role', 'ROLE_RECRUITER');
-          navigate('/recruiter-dashboard');
-        } else {
-          localStorage.setItem('role', 'ROLE_CANDIDATE');
-          navigate('/dashboard');
-        }
+        localStorage.setItem('role', 'ROLE_RECRUITER');
+        
+        // Force direct navigation immediately
+        window.location.href = '/recruiter-dashboard';
+        return;
       } else {
         setError('Authentication token missing from server response.');
       }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || 'Invalid email or password.');
+      console.error("LOGIN FAILED:", err);
+      setError(err.response?.data?.message || err.message || 'Login failed.');
     } finally {
       setLoading(false);
     }
