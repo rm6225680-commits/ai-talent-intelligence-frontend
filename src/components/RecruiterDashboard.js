@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -11,9 +11,7 @@ import {
   Mail, 
   Code, 
   Briefcase, 
-  LogOut, 
-  TrendingUp,
-  Sparkles
+  LogOut
 } from 'lucide-react';
 
 export default function RecruiterDashboard() {
@@ -24,7 +22,7 @@ export default function RecruiterDashboard() {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const navigate = useNavigate();
 
-  const fetchCandidates = async () => {
+  const fetchCandidates = useCallback(async () => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
@@ -38,7 +36,8 @@ export default function RecruiterDashboard() {
     setError('');
 
     try {
-      const response = await axios.get('http://localhost:8080/api/candidate/all', {
+      const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+      const response = await axios.get(`${baseURL}/api/candidate/all`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -62,11 +61,11 @@ export default function RecruiterDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
     fetchCandidates();
-  }, [navigate]);
+  }, [fetchCandidates]);
 
   const handleLogout = () => {
     localStorage.clear();
