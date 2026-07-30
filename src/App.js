@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import RecruiterDashboard from './components/RecruiterDashboard';
+import AdminDashboard from './components/AdminDashboard'; // Make sure this file exists in your components folder!
 import Navbar from './components/Navbar';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Routes>
       </div>
     </Router>
